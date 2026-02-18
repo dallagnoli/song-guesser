@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using System.IO;
 
 string filePath = "list.txt";
-string secretWord = "";
+string secretSong = "";
 
-// 1. Load Data
 if (File.Exists(filePath))
 {
-    string[] words = File.ReadAllLines(filePath);
-    if (words.Length == 0)
+    string[] lines = File.ReadAllLines(filePath);
+    if (lines.Length == 0)
     {
         Console.WriteLine("Error: The list.txt file is empty.");
         return;
     }
     Random rng = new Random();
-    secretWord = words[rng.Next(words.Length)].Trim();
+    secretSong = lines[rng.Next(lines.Length)].Trim();
 }
 else
 {
@@ -24,12 +23,19 @@ else
 }
 
 int lives = 8;
-char[] displayWord = new string('_', secretWord.Length).ToCharArray();
+
+char[] displaySong = new char[secretSong.Length];
+for (int i = 0; i < secretSong.Length; i++)
+{
+    displaySong[i] = char.IsLetter(secretSong[i]) ? '_' : secretSong[i];
+}
+
 List<char> wrongGuesses = new List<char>();
 
+// 2. Start Menu
 Console.Clear();
 Console.WriteLine("==============================");
-Console.WriteLine("        WORD GUESSER          ");
+Console.WriteLine("        SONGS GUESSER         ");
 Console.WriteLine("==============================");
 Console.WriteLine("Press any key to start!");
 Console.WriteLine("(Press Ctrl+Q at any time to quit)");
@@ -42,33 +48,33 @@ if (startKey.Key == ConsoleKey.Q && (startKey.Modifiers & ConsoleModifiers.Contr
     return;
 }
 
-while (lives > 0 && new string(displayWord).Contains('_'))
+while (lives > 0 && new string(displaySong).Contains('_'))
 {
     Console.WriteLine("\n------------------------------");
-    Console.WriteLine($"Word:  {string.Join(" ", displayWord)}");
+    Console.WriteLine($"SONG:  {string.Join(" ", displaySong)}");
     Console.WriteLine($"Lives: {lives} | Misses: {string.Join(", ", wrongGuesses)}");
-    Console.Write("Guess: ");
+    Console.Write("Guess a letter (or 'Enter' for full title): ");
 
     ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 
     if (keyInfo.Key == ConsoleKey.Q && (keyInfo.Modifiers & ConsoleModifiers.Control) != 0)
     {
-        Console.WriteLine($"\n\nQuitting... The word was: {secretWord}");
+        Console.WriteLine($"\n\nQuitting... The song was: {secretSong}");
         return;
     }
 
     if (keyInfo.Key == ConsoleKey.Enter)
     {
-        Console.Write("\n[FULL WORD GUESS]: ");
-        string wordGuess = Console.ReadLine()?.ToLower() ?? "";
-        if (wordGuess == secretWord.ToLower())
+        Console.Write("\n[FULL SONG GUESS]: ");
+        string songGuess = Console.ReadLine()?.ToLower() ?? "";
+        if (songGuess == secretSong.ToLower())
         {
-            displayWord = secretWord.ToCharArray();
+            displaySong = secretSong.ToCharArray();
             break;
         }
         else
         {
-            Console.WriteLine(">> Incorrect word!");
+            Console.WriteLine(">> Incorrect title!");
             lives--;
             continue;
         }
@@ -77,19 +83,19 @@ while (lives > 0 && new string(displayWord).Contains('_'))
     char guess = char.ToLower(keyInfo.KeyChar);
     if (!char.IsLetter(guess)) continue;
 
-    if (new string(displayWord).ToLower().Contains(guess) || wrongGuesses.Contains(guess))
+    if (new string(displaySong).ToLower().Contains(guess) || wrongGuesses.Contains(guess))
     {
         Console.WriteLine($"\n>> You already tried '{guess}'!");
         continue;
     }
 
-    if (secretWord.ToLower().Contains(guess))
+    if (secretSong.ToLower().Contains(guess))
     {
-        Console.WriteLine($"\n>> Yes! '{guess}' is in the word.");
-        for (int i = 0; i < secretWord.Length; i++)
+        Console.WriteLine($"\n>> Yes! '{guess}' is in the song title.");
+        for (int i = 0; i < secretSong.Length; i++)
         {
-            if (char.ToLower(secretWord[i]) == guess)
-                displayWord[i] = secretWord[i];
+            if (char.ToLower(secretSong[i]) == guess)
+                displaySong[i] = secretSong[i];
         }
     }
     else
@@ -101,14 +107,14 @@ while (lives > 0 && new string(displayWord).Contains('_'))
 }
 
 Console.WriteLine("\n==============================");
-if (!new string(displayWord).Contains('_'))
+if (!new string(displaySong).Contains('_'))
 {
-    Console.WriteLine("WINNER!");
-    Console.WriteLine($"The word was: {secretWord}");
+    Console.WriteLine("    YOU'RE A ROCKSTAR!    ");
+    Console.WriteLine($"Song: {secretSong}");
 }
 else
 {
-    Console.WriteLine("GAME OVER");
-    Console.WriteLine($"The word was: {secretWord}");
+    Console.WriteLine("    OUT OF LIVES...       ");
+    Console.WriteLine($"The song was: {secretSong}");
 }
 Console.WriteLine("==============================\n");
