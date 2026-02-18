@@ -35,7 +35,7 @@ List<char> wrongGuesses = new List<char>();
 // 2. Start Menu
 Console.Clear();
 Console.WriteLine("==============================");
-Console.WriteLine("        SONGS GUESSER         ");
+Console.WriteLine("         SONG GUESSER         ");
 Console.WriteLine("==============================");
 Console.WriteLine("Press any key to start!");
 Console.WriteLine("(Press Ctrl+Q at any time to quit)");
